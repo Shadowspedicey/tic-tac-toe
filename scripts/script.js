@@ -1,32 +1,85 @@
 const UI = (() =>
 {
+  const UpdateComputerScore = () =>
+  {
+    const computerScore = document.querySelector("#computer-score");
+    computerScore.textContent = localStorage.getItem("ComputerScore");
+  }
+  UpdateComputerScore();
+
+  const UpdatePlayerScore = () =>
+  {
+    const playerScore = document.querySelector("#player-score");
+    playerScore.textContent = currentPlayer.score;
+
+  }
+
+  const ChangePlayerScoreText = () =>
+  {
+    const playerScoreText = document.querySelector("#player-score-text");
+    playerScoreText.textContent = currentPlayer.name + "'s Score";
+
+    UpdatePlayerScore();
+  }
+
   const startNresetButton = document.querySelector("#start-reset-game");
   startNresetButton.addEventListener("click", () =>
   {
-    currentPlayer.canPlay = true;
+    if (startNresetButton.textContent === "Start Game")
+    {
+      (function StartGame()
+      {
+        const playerName = prompt("What's your name?");
+        let player;
 
-    startNresetButton.textContent = "Reset Game";
-    //Do logic
+        JSON.parse(localStorage.getItem("Players")).forEach(_player =>
+          {
+            if (_player.name === playerName) player = _player;
+          });
+        if (player == null)
+        {
+          let tempPlayer = Player(playerName, "X");
+          if (tempPlayer.name == null) return;
+          player = tempPlayer;
+          Game.PushPlayerToArray(player);
+        }
+    
+        currentPlayer = player;
+        currentPlayer.canPlay = true;
+        ChangePlayerScoreText();
+
+        DisplayController.AddEvents();
+    
+        startNresetButton.textContent = "Reset Game";    
+      })()
+    }
+    else if (startNresetButton.textContent === "Reset Game")
+    {
+      (function ResetGame()
+      {
+        Gameboard.ClearBoard();
+        Game.gameOver = false;
+        currentPlayer.canPlay = true;
+      })();
+    }
   })
+
+  return { UpdatePlayerScore, UpdateComputerScore }
 })()
 
 const Player = (name, symbol) =>
 {
-  let score = localStorage.getItem("PlayerScore") || 0;
+  let score = 0;
 
   let canPlay = false;
 
-  const logName = () => console.log(name);
-  
-  return { logName, symbol, canPlay };
+  return { name, score, symbol, canPlay };
 }
-
-const Player1 = Player("s", "X");
-let currentPlayer = Player1;
 
 const Computer = (() =>
 {
   const domBoardElements = document.querySelectorAll(".square");
+  let score = localStorage.getItem("ComputerScore") || 0;
 
   const PlaceSymbol = (element, index) =>
   {
@@ -55,13 +108,13 @@ const Computer = (() =>
     PlaceSymbol(domBoardElements[index], index);
   }
 
-  return { Play }
+  return { Play, score }
 })();
 
 const Gameboard = (() =>
 {
   let _boardElements = [null, null, null, null, null, null, null, null, null];
-  const domBoardElements = [...document.querySelectorAll(".square")];
+  const _domBoardElements = [...document.querySelectorAll(".square")];
 
   const linkElements = (id, index) =>
   {
@@ -92,7 +145,17 @@ const Gameboard = (() =>
 
   const logElements = () => console.log(_boardElements);
 
-  return { linkElements, logElements, CheckWinner};
+  const ClearBoard = () =>
+  {
+    for (let i = 0; i < _boardElements.length; i++) _boardElements[i] = null;
+
+    _domBoardElements.forEach(domElement => 
+      {
+        if (domElement.querySelector("div")) domElement.querySelector("div").remove()
+      });
+  }
+
+  return { linkElements, logElements, CheckWinner, ClearBoard };
 })();
 
 const DisplayController = (() =>
@@ -115,8 +178,6 @@ const DisplayController = (() =>
 
     Gameboard.linkElements(Div.id, index);
 
-    //Game.ChangePlayer();
-
     Game.CheckIfWon();
 
     currentPlayer.canPlay = false;
@@ -124,16 +185,13 @@ const DisplayController = (() =>
     Gameboard.logElements();
   }
 
-  //Checks for a click and adds symbol if true
-  domBoardElements.forEach((domElement, index) =>
-    {
-      domElement.addEventListener("click", () => AddSymbol(domElement, index));
-    });
-
-  (function ()
+  //Adds all event listeners to DOM squares
+  const AddEvents = () =>
   {
     domBoardElements.forEach((domElement, index) =>
     {
+      domElement.addEventListener("click", () => AddSymbol(domElement, index));
+
       domElement.addEventListener("mouseover", () => 
       {
         if (Game.gameOver || !currentPlayer.canPlay) return;
@@ -156,13 +214,17 @@ const DisplayController = (() =>
       });
 
     });
-  })()
+  }
 
-  return { AddSymbol }
+  return { AddSymbol, AddEvents }
 })();
 
 const Game = (() =>
 {
+  let players = (JSON.parse(localStorage.getItem("Players"))) || [];
+  localStorage.setItem("Players", JSON.stringify(players));
+  console.log(players);
+
   let gameOver = false;
 
   const ChangePlayer = () =>
@@ -177,9 +239,31 @@ const Game = (() =>
     if (won != null) 
     {
       Game.gameOver = true;
-      window.setTimeout(() => alert(won + " has won"), 100);
+      if (won === "X")
+      {
+        window.setTimeout(() => alert(currentPlayer.name + " has Won!"), 250);
+        currentPlayer.score++;
+        UI.UpdatePlayerScore();
+        SaveChangesToLocalStorage();
+      }
+      else if (won === "O")
+      {
+        window.setTimeout(() => alert("Computer has Won!"), 250);
+        Computer.score++;
+        localStorage.setItem("ComputerScore", Computer.score);
+        UI.UpdateComputerScore();
+      }
     }
   }
 
-  return { ChangePlayer, CheckIfWon, gameOver }
+  const SaveChangesToLocalStorage = () => localStorage.setItem("Players", JSON.stringify(players));
+
+  const PushPlayerToArray = (_player) =>
+  {
+    players.push(_player);
+    SaveChangesToLocalStorage();
+    console.log(JSON.parse(localStorage.getItem("Players")))
+  }
+
+  return { ChangePlayer, CheckIfWon, gameOver, PushPlayerToArray }
 })();
