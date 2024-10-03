@@ -1,0 +1,62 @@
+:root {
+	--backgroundColor: white;
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+main {
+	height: 100vh;
+	padding: 0 50px;
+}
+
+#grid {
+	width: auto;
+	max-width: 75vh;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+
+	display: grid;
+	grid-template-columns: repeat(3, auto);
+
+	margin: auto;
+}
+
+.grid-item {
+	height: 100%;
+	aspect-ratio: 1;
+
+	font-family: "Roboto";
+	font-size: 8.5rem;
+	font-weight: bold;
+	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	border-bottom: 0.25rem solid black;
+	border-right: 0.25rem solid black;
+
+	-moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
+}
+
+.grid-item:hover {
+	background-color: lightgray;
+}
+
+.grid-item:active {
+	background-color: rgb(170, 170, 170);
+}
