@@ -14,24 +14,23 @@ main {
 }
 
 #grid {
-	width: auto;
-	max-width: 75vh;
+	width: fit-content;
 	position: relative;
 	top: 50%;
 	transform: translateY(-50%);
 
 	display: grid;
-	grid-template-columns: repeat(3, auto);
+	grid-template-columns: repeat(3, minmax(150px, 200px));
+	grid-template-rows: repeat(3, minmax(150px, 200px));
 
 	margin: auto;
 }
 
 .grid-item {
 	height: 100%;
-	aspect-ratio: 1;
 
 	font-family: "Roboto";
-	font-size: 8.5rem;
+	font-size: 5.5rem;
 	font-weight: bold;
 	
 	display: flex;
@@ -53,10 +52,10 @@ main {
    user-select: none;
 }
 
-.grid-item:hover {
+.grid-item:not(.played):hover {
 	background-color: lightgray;
 }
 
-.grid-item:active {
+.grid-item:not(.played):active {
 	background-color: rgb(170, 170, 170);
 }

@@ -4,19 +4,20 @@
 		<meta charset="UTF-8">
 		<title>Tic Tac Toe</title>
 		<link rel="stylesheet" href="./styles/style.css">
+		<script src="./scripts/script.js" defer></script>
 	</head>
 	<body>
 		<main>
 			<div id="grid">
-				<div class="grid-item"></div>
-				<div class="grid-item"></div>
-				<div class="grid-item" style="border-right: none;"></div>
-				<div class="grid-item"></div>
-				<div class="grid-item"></div>
-				<div class="grid-item" style="border-right: none;"></div>
-				<div class="grid-item" style="border-bottom: none;"></div>
-				<div class="grid-item" style="border-bottom: none;"></div>
-				<div class="grid-item" style="border-right: none; border-bottom: none;"></div>
+				<div class="grid-item" coords="0,0"></div>
+				<div class="grid-item" coords="0,1"></div>
+				<div class="grid-item" coords="0,2" style="border-right: none;"></div>
+				<div class="grid-item" coords="1,0"></div>
+				<div class="grid-item" coords="1,1"></div>
+				<div class="grid-item" coords="1,2" style="border-right: none;"></div>
+				<div class="grid-item" coords="2,0" style="border-bottom: none;"></div>
+				<div class="grid-item" coords="2,1" style="border-bottom: none;"></div>
+				<div class="grid-item" coords="2,2" style="border-right: none; border-bottom: none;"></div>
 			</div>
 		</main>
 	</body>
